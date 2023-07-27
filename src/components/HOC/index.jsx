@@ -1,10 +1,12 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const HOC = (Component) => {
   function ComponentWithRouterProp(props) {
     let location = useLocation();
     let navigate = useNavigate();
-    return <Component {...props} router={{ location, navigate }} />;
+    let params = useParams();
+
+    return <Component {...props} router={{ location, navigate, params }} />;
   }
   return ComponentWithRouterProp;
 };

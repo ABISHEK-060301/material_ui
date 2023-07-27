@@ -1,13 +1,13 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
 import CottageRoundedIcon from "@mui/icons-material/CottageRounded";
 import DiscountIcon from "@mui/icons-material/Discount";
-import EmailIcon from "@mui/icons-material/Email";
-import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
-import LockRoundedIcon from "@mui/icons-material/LockRounded";
-import MenuIcon from "@mui/icons-material/Menu";
 import DrawIcon from "@mui/icons-material/Draw";
-import CloseIcon from "@mui/icons-material/Close";
+import EmailIcon from "@mui/icons-material/Email";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
+import LoginIcon from "@mui/icons-material/Login";
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   Box,
   Button,
@@ -29,17 +29,18 @@ import {
   Typography,
 } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assests/logo-cropped.png";
 import HOC from "../../components/HOC";
-import LoginIcon from "@mui/icons-material/Login";
 
 const TopBar = (props) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [loginDialog, setLoginDialog] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const drawerWidth = 240;
-  const { navigate } = props.router;
+  const { navigate, location } = props.router;
+
+  console.log("location", location);
 
   const [formData, setForm] = useState({
     email: "",
@@ -51,10 +52,16 @@ const TopBar = (props) => {
     passwordValidation: "",
   });
 
+  const [path, setPath] = useState("");
+
+  useEffect(() => {
+    setPath(location.pathname);
+  }, [location.pathname]);
+
   const menu = [
     { label: "Home", path: "/", icon: <CottageRoundedIcon /> },
     { label: "Top Deals", path: "/top-deals", icon: <LocalMallIcon /> },
-    { label: "Offers", path: "offers", icon: <DiscountIcon /> },
+    { label: "Offers", path: "/offers", icon: <DiscountIcon /> },
   ];
 
   const loginRegister = [
@@ -163,9 +170,14 @@ const TopBar = (props) => {
                       {menu.map((menu, index) => (
                         <Grid item>
                           <Button
-                            color="secondary"
+                            variant={menu.path === path ? "contained" : "text"}
+                            color={"secondary"}
                             key={`${index}-${menu.label}`}
-                            sx={{ my: 2, display: "block" }}
+                            sx={{
+                              my: 2,
+                              display: "block",
+                              borderBottom: "2px solid purple",
+                            }}
                             onClick={() => navigate(menu.path)}
                           >
                             {menu.label}
@@ -330,7 +342,17 @@ const TopBar = (props) => {
               </ListItem>
             </Grid>
             <Grid item xs={2}>
-              <IconButton onClick={toggleDrawer} size="medium">
+              <IconButton
+                sx={{
+                  "& :hover": {
+                    backgroundColor: "black",
+                    borderRadius: 20,
+                    p: 0.1,
+                  },
+                }}
+                onClick={toggleDrawer}
+                size="medium"
+              >
                 <CloseIcon sx={{ color: "white" }} />
               </IconButton>
             </Grid>
@@ -339,10 +361,27 @@ const TopBar = (props) => {
           <List className="drawer">
             <React.Fragment>
               {menu.map((menu, index) => (
-                <ListItem key={`${index}-${menu.label}`} disablePadding>
+                <ListItem
+                  sx={{
+                    backgroundColor: menu.path === path ? "purple" : "",
+                  }}
+                  key={`${index}-${menu.label}`}
+                  disablePadding
+                >
                   <ListItemButton onClick={() => navigate(menu.path)}>
-                    <ListItemIcon>{menu.icon}</ListItemIcon>
-                    <ListItemText primary={menu.label} />
+                    <ListItemIcon
+                      sx={{
+                        color: menu.path === path ? "white" : "",
+                      }}
+                    >
+                      {menu.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      sx={{
+                        color: menu.path === path ? "white" : "",
+                      }}
+                      primary={menu.label}
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}

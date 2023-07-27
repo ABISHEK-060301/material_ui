@@ -20,6 +20,7 @@ const Main = () => {
               minHeight: "91.5vh",
             }}
             item
+            xs={10}
           >
             <Routes>
               {routes.map((route, index) => {
