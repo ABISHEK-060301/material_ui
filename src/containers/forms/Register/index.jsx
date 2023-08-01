@@ -13,8 +13,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useFormik } from "formik";
-import * as yup from "yup";
 import { useState } from "react";
+import * as yup from "yup";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +22,15 @@ const Register = () => {
   const isMobile = useMediaQuery("(max-width: 899px)");
 
   const validationSchema = yup.object({
+    firstName: yup
+      .string("Enter your first name")
+      .required("First name is required"),
+    lastName: yup
+      .string("Enter your last name")
+      .required("Last name is required"),
+    sureName: yup
+      .string("Enter your sure name")
+      .required("Sure name is required"),
     email: yup
       .string("Enter your email")
       .email("Enter a valid email")
@@ -30,6 +39,10 @@ const Register = () => {
       .string("Enter your password")
       .min(8, "Password should be of minimum 8 characters length")
       .required("Password is required"),
+    confirmPassword: yup
+      .string("Enter your confirm password")
+      .min(8, "Password should be of minimum 8 characters length")
+      .required("Confirm password is required"),
   });
 
   const formik = useFormik({
@@ -42,8 +55,8 @@ const Register = () => {
       confirmPassword: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      prompt(JSON.stringify(values, null, 2));
     },
   });
 
@@ -55,10 +68,9 @@ const Register = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleSubmit = (e) => {};
   return (
     <Box sx={{ mt: isMobile ? 4 : 9, flexGrow: 1 }}>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
         <FormControl>
           <Grid container justifyContent={"center"}>
             <Grid item xs={10}>
@@ -71,6 +83,8 @@ const Register = () => {
                 <Grid item md={5} xs={12}>
                   <FormLabel>First Name</FormLabel>
                   <TextField
+                    value={formik.values.firstName}
+                    onChange={formik.handleChange}
                     name="firstName"
                     InputProps={{
                       startAdornment: (
@@ -81,8 +95,12 @@ const Register = () => {
                     }}
                     color="secondary"
                     placeholder="Enter First Name"
-                    required
                     fullWidth
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.firstName &&
+                      Boolean(formik.errors.firstName)
+                    }
                     helperText={
                       formik.touched.firstName && formik.errors.firstName
                     }
@@ -92,6 +110,8 @@ const Register = () => {
                 <Grid item md={5} xs={12}>
                   <FormLabel>Last Name</FormLabel>
                   <TextField
+                    onChange={formik.handleChange}
+                    value={formik.values.lastName}
                     name="lastName"
                     InputProps={{
                       startAdornment: (
@@ -102,8 +122,11 @@ const Register = () => {
                     }}
                     color="secondary"
                     placeholder="Enter Last Name"
-                    required
                     fullWidth
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.lastName && Boolean(formik.errors.lastName)
+                    }
                     helperText={
                       formik.touched.lastName && formik.errors.lastName
                     }
@@ -113,7 +136,9 @@ const Register = () => {
                 <Grid item md={5} xs={12}>
                   <FormLabel>Sure Name</FormLabel>
                   <TextField
+                    onChange={formik.handleChange}
                     name="sureName"
+                    value={formik.values.sureName}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -123,8 +148,11 @@ const Register = () => {
                     }}
                     color="secondary"
                     placeholder="Enter Sure Name"
-                    required
                     fullWidth
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.sureName && Boolean(formik.errors.sureName)
+                    }
                     helperText={
                       formik.touched.sureName && formik.errors.sureName
                     }
@@ -134,6 +162,8 @@ const Register = () => {
                 <Grid item md={5} xs={12}>
                   <FormLabel>Email</FormLabel>
                   <TextField
+                    onChange={formik.handleChange}
+                    value={formik.values.email}
                     name="email"
                     InputProps={{
                       startAdornment: (
@@ -144,8 +174,9 @@ const Register = () => {
                     }}
                     color="secondary"
                     placeholder="Enter Email"
-                    required
                     fullWidth
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
                   />
                 </Grid>
@@ -153,6 +184,8 @@ const Register = () => {
                 <Grid item md={5} xs={12}>
                   <FormLabel>Password</FormLabel>
                   <TextField
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
                     name="password"
                     type={showPassword ? "text" : "password"}
                     InputProps={{
@@ -176,8 +209,11 @@ const Register = () => {
                     }}
                     color="secondary"
                     placeholder="Enter Password"
-                    required
                     fullWidth
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.password && Boolean(formik.errors.password)
+                    }
                     helperText={
                       formik.touched.password && formik.errors.password
                     }
@@ -187,7 +223,9 @@ const Register = () => {
                 <Grid item md={5} xs={12}>
                   <FormLabel>Confirm Password</FormLabel>
                   <TextField
+                    onChange={formik.handleChange}
                     name="confirmPassword"
+                    value={formik.values.confirmPassword}
                     type={showConfirmPassword ? "text" : "password"}
                     InputProps={{
                       startAdornment: (
@@ -200,7 +238,6 @@ const Register = () => {
                           <IconButton
                             aria-label="toggle password visibility"
                             onClick={toggleConfirmPassword}
-                            // onMouseDown={handleMouseDownPassword}
                             edge="end"
                           >
                             {showConfirmPassword ? (
@@ -214,8 +251,12 @@ const Register = () => {
                     }}
                     color="secondary"
                     placeholder="Enter Confirm Password"
-                    required
                     fullWidth
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.confirmPassword &&
+                      Boolean(formik.errors.confirmPassword)
+                    }
                     helperText={
                       formik.touched.confirmPassword &&
                       formik.errors.confirmPassword
@@ -243,7 +284,7 @@ const Register = () => {
                     <Grid item md={2} xs={5}>
                       <Button
                         fullWidth
-                        onClick={handleSubmit}
+                        type="submit"
                         variant="contained"
                         color="secondary"
                       >
@@ -251,7 +292,6 @@ const Register = () => {
                       </Button>
                     </Grid>
                   </Grid>
-                  {/* Main */}
                 </Grid>
               </Grid>
             </Grid>
