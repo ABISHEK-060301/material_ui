@@ -6,6 +6,7 @@ import TopBar from "./top-bar";
 
 const Main = () => {
   const isTablet = useMediaQuery("(max-width: 899px)");
+  console.log("isTablet", isTablet);
 
   return (
     <React.Fragment>

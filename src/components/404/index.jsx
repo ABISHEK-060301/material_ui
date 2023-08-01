@@ -19,7 +19,7 @@ const Error404 = () => {
         align="center"
         style={{ color: "white" }}
       >
-        404, Page you visit is not found
+        404, The page you visited is in development stage!
       </Typography>
     </Box>
   );

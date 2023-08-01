@@ -25,6 +25,10 @@
   /* width: 15% !important; */
 }
 
+.MuiCardMedia-root {
+  object-fit: fill !important;
+}
+
 .MuiFormLabel-colorPrimary {
   color: purple !important;
   line-height: 1.9em !important;

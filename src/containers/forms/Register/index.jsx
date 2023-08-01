@@ -12,12 +12,40 @@ import {
   TextField,
   useMediaQuery,
 } from "@mui/material";
+import { useFormik } from "formik";
+import * as yup from "yup";
 import { useState } from "react";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const isMobile = useMediaQuery("(max-width: 899px)");
+
+  const validationSchema = yup.object({
+    email: yup
+      .string("Enter your email")
+      .email("Enter a valid email")
+      .required("Email is required"),
+    password: yup
+      .string("Enter your password")
+      .min(8, "Password should be of minimum 8 characters length")
+      .required("Password is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      sureName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -30,7 +58,7 @@ const Register = () => {
   const handleSubmit = (e) => {};
   return (
     <Box sx={{ mt: isMobile ? 4 : 9, flexGrow: 1 }}>
-      <form>
+      <form onSubmit={formik.handleSubmit}>
         <FormControl>
           <Grid container justifyContent={"center"}>
             <Grid item xs={10}>
@@ -43,6 +71,7 @@ const Register = () => {
                 <Grid item md={5} xs={12}>
                   <FormLabel>First Name</FormLabel>
                   <TextField
+                    name="firstName"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -54,12 +83,16 @@ const Register = () => {
                     placeholder="Enter First Name"
                     required
                     fullWidth
+                    helperText={
+                      formik.touched.firstName && formik.errors.firstName
+                    }
                   />
                 </Grid>
 
                 <Grid item md={5} xs={12}>
                   <FormLabel>Last Name</FormLabel>
                   <TextField
+                    name="lastName"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -71,12 +104,16 @@ const Register = () => {
                     placeholder="Enter Last Name"
                     required
                     fullWidth
+                    helperText={
+                      formik.touched.lastName && formik.errors.lastName
+                    }
                   />
                 </Grid>
 
                 <Grid item md={5} xs={12}>
                   <FormLabel>Sure Name</FormLabel>
                   <TextField
+                    name="sureName"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -88,12 +125,16 @@ const Register = () => {
                     placeholder="Enter Sure Name"
                     required
                     fullWidth
+                    helperText={
+                      formik.touched.sureName && formik.errors.sureName
+                    }
                   />
                 </Grid>
 
                 <Grid item md={5} xs={12}>
                   <FormLabel>Email</FormLabel>
                   <TextField
+                    name="email"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -105,12 +146,14 @@ const Register = () => {
                     placeholder="Enter Email"
                     required
                     fullWidth
+                    helperText={formik.touched.email && formik.errors.email}
                   />
                 </Grid>
 
                 <Grid item md={5} xs={12}>
                   <FormLabel>Password</FormLabel>
                   <TextField
+                    name="password"
                     type={showPassword ? "text" : "password"}
                     InputProps={{
                       startAdornment: (
@@ -135,12 +178,16 @@ const Register = () => {
                     placeholder="Enter Password"
                     required
                     fullWidth
+                    helperText={
+                      formik.touched.password && formik.errors.password
+                    }
                   />
                 </Grid>
 
                 <Grid item md={5} xs={12}>
                   <FormLabel>Confirm Password</FormLabel>
                   <TextField
+                    name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     InputProps={{
                       startAdornment: (
@@ -169,6 +216,10 @@ const Register = () => {
                     placeholder="Enter Confirm Password"
                     required
                     fullWidth
+                    helperText={
+                      formik.touched.confirmPassword &&
+                      formik.errors.confirmPassword
+                    }
                   />
                 </Grid>
 

@@ -40,7 +40,7 @@ const TopBar = (props) => {
   const drawerWidth = 240;
   const { navigate, location } = props.router;
 
-  console.log("location", location);
+  // console.log("location", location);
 
   const [formData, setForm] = useState({
     email: "",
