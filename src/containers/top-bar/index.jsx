@@ -32,6 +32,8 @@ import AppBar from "@mui/material/AppBar";
 import React, { useEffect, useState } from "react";
 import logo from "../../assests/logo-cropped.png";
 import HOC from "../../components/HOC";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const TopBar = (props) => {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -40,16 +42,26 @@ const TopBar = (props) => {
   const drawerWidth = 240;
   const { navigate, location } = props.router;
 
-  // console.log("location", location);
-
-  const [formData, setForm] = useState({
-    email: "",
-    password: "",
+  const validationSchema = yup.object({
+    email: yup
+      .string("Enter your email")
+      .email("Enter a valid email")
+      .required("Email is required"),
+    password: yup
+      .string("Enter your password")
+      .min(8, "Password should be of minimum 8 characters length")
+      .required("Password is required"),
   });
 
-  const [formValidation, setFormValidation] = useState({
-    emailValidation: "",
-    passwordValidation: "",
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2));
+    },
   });
 
   const [path, setPath] = useState("");
@@ -77,23 +89,6 @@ const TopBar = (props) => {
     },
   ];
 
-  const saveFormData = (name, value) => {
-    setForm((rest) => ({ ...rest, [name]: value }));
-    validation(name, value);
-  };
-
-  const validation = (name, value) => {
-    const set = name === "email" ? "emailValidation" : "passwordValidation";
-    if (value === "") {
-      setFormValidation((rest) => ({
-        ...rest,
-        [set]: `Please input ${name}`,
-      }));
-    } else {
-      setFormValidation((rest) => ({ ...rest, [set]: "" }));
-    }
-  };
-
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -104,15 +99,9 @@ const TopBar = (props) => {
 
   const toggleLoginDialog = () => {
     setLoginDialog(!loginDialog);
+    formik.handleReset();
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("e", e);
-    validation();
-  };
-  // console.log("FORM", formData);
-  // console.log("FORM VALID", formValidation);
   return (
     <React.Fragment>
       <Box>
@@ -229,23 +218,23 @@ const TopBar = (props) => {
         </AppBar>
 
         <Dialog open={loginDialog} maxWidth={"md"} onClose={toggleLoginDialog}>
-          <Box sx={{ flexGrow: 1, p: 5 }}>
+          <Box sx={{ flexGrow: 1, p: 5, width: 500 }}>
             <DialogTitle align="center" color={"purple"}>
               Login With Credentials
             </DialogTitle>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={formik.handleSubmit}>
               <Grid container direction={"column"} rowGap={3}>
                 <Grid item>
                   <FormLabel>Email</FormLabel>
                   <TextField
                     type="email"
                     name="email"
-                    error={formValidation.emailValidation}
-                    onChange={(e) => {
-                      saveFormData(e.target.name, e.target.value);
-                    }}
-                    helperText={formValidation.emailValidation}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -263,11 +252,15 @@ const TopBar = (props) => {
                   <FormLabel>Password</FormLabel>
                   <TextField
                     name="password"
-                    error={formValidation.passwordValidation}
-                    helperText={formValidation.passwordValidation}
-                    onChange={(e) => {
-                      saveFormData(e.target.name, e.target.value);
-                    }}
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.password && Boolean(formik.errors.password)
+                    }
+                    helperText={
+                      formik.touched.password && formik.errors.password
+                    }
                     type={showPassword ? "text" : "password"}
                     InputProps={{
                       startAdornment: (
